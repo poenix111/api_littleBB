@@ -1,7 +1,7 @@
 class Libro:
-    def __init__(self, conexion, cursor):
-        self.conexion = conexion
-        self.cursor = cursor
+    def __init__(self, db):
+        self.conexion = db.conexion
+        self.cursor = db.cursor
 
     def crear(self, nombre, autor, genero, edicion, editorial, idioma, isbn, descripcion):
 

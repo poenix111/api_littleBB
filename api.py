@@ -4,15 +4,39 @@ from libro import Libro
 from material import Material
 from usuario import Usuario
 from flask_cors import CORS,cross_origin
+from db import DB
+
+
+
 app = Flask(__name__)
 core = CORS(app)
-conexion = mysql.connector.connect(user='brian',password='ashe123',database='biblioteca')
-cursor = conexion.cursor()
+
+host = 'poenix111.mysql.pythonanywhere-services.com'
+user = 'poenix111'
+password = '@ashe123'
+database = 'poenix111$biblioteca'
+
+""" conexion = mysql.connector.connect(user='brian',password='ashe123',database='biblioteca')
+cursor = conexion.cursor() """
+
+
+
+
+db = DB(host, user, password, database)
+@app.before_request
+def before_request_callback():  
+    db.conectar()
+
+@app.after_request
+def after_request_callback(response):  
+    db.desconectar()
+    return response
+
 
 @app.route('/registrar-usuario-api', methods = ['GET'])
 @cross_origin()
 def registrarUsuario():
-    user = Usuario(conexion, cursor)
+    user = Usuario(db)
     nombre = request.args.get('nombre')
     usuario = request.args.get('usuario')
     contra = request.args.get('contra')
@@ -30,7 +54,7 @@ def registrarUsuario():
 @app.route("/registrar-libro", methods = ['GET'])
 @cross_origin()
 def registrarLibro():
-    libro = Libro(conexion, cursor)
+    libro = Libro(db)
     nombre = request.args.get('nombre')
     autor = request.args.get('autor')
     genero = request.args.get('genero')
@@ -46,7 +70,7 @@ def registrarLibro():
 
 @app.route("/registrar-material", methods = ['GET'])
 def registrarMaterial():
-    material = Material(conexion,cursor)
+    material = Material(db)
     tipo = request.args.get('tipo')
     marca = request.args.get('marca')
     descripcion = request.args.get('descripcion')
@@ -59,27 +83,27 @@ def registrarMaterial():
 
 @app.route('/recuperar-libros/', methods = ['GET'])
 def recuperarLibros():
-    libro = Libro(conexion, cursor)
+    libro = Libro(db)
     result = libro.mostrarAll()
     print(result)
     return jsonify(result)
 
 @app.route('/recuperar-material/', methods = ['GET'])
 def recuperarMaterial():
-    material = Material(conexion,cursor)
+    material = Material(db)
     result = material.mostrarAll()
     print(result)
     return jsonify(result)
 @app.route('/recuperar-usuarios', methods = ['GET'])
 def recuperarUsuarios():
-    usuario = Usuario(conexion,cursor)
+    usuario = Usuario(db)
     result = usuario.mostrarAll()
     return jsonify(result)
 
 
 @app.route('/editar-usuario', methods = ['POST'])
 def editarUsuario():
-    user = Usuario(conexion, cursor)
+    user = Usuario(db)
     data = request.get_json(force=True)
     print(data)
     user.actualizar(data)
@@ -89,7 +113,7 @@ def editarUsuario():
 
 @app.route('/editar-libro', methods = ['POST'])
 def editarLibro():
-    libro = Libro(conexion, cursor)
+    libro = Libro(db)
     data = request.get_json(force = True)
     libro.actualizar(data)
     respuesta = make_response("Hello World")
@@ -97,7 +121,7 @@ def editarLibro():
     return respuesta
 @app.route('/editar-material', methods = ['POST'])
 def editarMaterial():
-    material = Material(conexion,cursor)
+    material = Material(db)
     data = request.get_json(force = True)
     material.actualizar(data)
     respuesta = make_response("Hello World")

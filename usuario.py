@@ -3,9 +3,9 @@ from datetime import datetime
 
 
 class Usuario:
-    def __init__(self, conexion, cursor):
-        self.conexion = conexion
-        self.cursor = cursor
+    def __init__(self, db):
+        self.conexion = db.conexion
+        self.cursor = db.cursor
 
     def crear(self, nombre, usuario, contra, tipo, email, telefono, area):
         insertar = ('INSERT INTO usuario(id_usuario, nombre, tipo, email, telefono, pass, estado, fechaRegistro, penalizaciones, area) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)')

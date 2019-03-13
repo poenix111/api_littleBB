@@ -1,7 +1,7 @@
 class Material:
-    def __init__(self, conexion, cursor):
-        self.conexion = conexion
-        self.cursor = cursor
+    def __init__(self, db):
+        self.conexion = db.conexion
+        self.cursor = db.cursor
 
     def crear(self, tipo, marca, descripcion, numSerie):
         insert = (
