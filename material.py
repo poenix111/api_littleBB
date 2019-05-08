@@ -3,19 +3,19 @@ class Material:
         self.conexion = db.conexion
         self.cursor = db.cursor
 
-    def crear(self, tipo, marca, descripcion, numSerie):
+    def crear(self, data):
         insert = (
             'INSERT INTO material(tipo, marca, descripcion, numSerie) VALUES (%s,%s,%s,%s)')
         tipoReal = type(int)
 
-        if(tipo == 'laptop' or tipo == ''):
+        if(data['tipo'] == 'laptop' or data['tipo'] == ''):
             tipoReal = 1
-        elif(tipo == 'bocina'):
+        elif(data['tipo'] == 'bocina'):
             tipoReal = 2
-        elif(tipo == 'proyector'):
+        elif(data['tipo'] == 'proyector'):
             tipoReal = 3
 
-        self.cursor.execute(insert, (tipoReal, marca, descripcion, numSerie))
+        self.cursor.execute(insert, (tipoReal, data['marca'], data['descripcion'], data['numSerie']))
         self.conexion.commit()
 
     def mostrarAll(self):
@@ -51,3 +51,69 @@ class Material:
         print(material)
         self.cursor.execute(update, (material['tipo'], material['marca'], material['descripcion'], material['numSerie'], material['id_material']))
         self.conexion.commit()
+
+    def exists(self, numSerie):
+        show = ('SELECT * FROM material WHERE numSerie = %s')
+
+        self.cursor.execute(show, (numSerie,))
+
+        r = self.cursor.fetchall()
+        print(r)
+        if (r):
+            return True
+        else:
+            return False
+    def deleteMaterial(self, numSerie):
+        if(self.exists(numSerie)):
+            delete = ('DELETE FROM material WHERE numSerie = %s')
+            self.cursor.execute(delete, (numSerie,))
+            self.conexion.commit()
+
+    def searchById(self, id_material):
+        show = ('SELECT * FROM material WHERE id_material = %s')
+
+        self.cursor.execute(show, (id_material,))
+
+        r = self.cursor.fetchone()
+        if (r):
+            return {
+                    "id_material": r[0],
+                    "tipo": r[1],
+                    "marca": r[2],
+                    "descripcion": r[3],
+                    "numSerie": r[4]
+            }
+        else:
+            return 'False'
+
+
+
+    def jsonExists(self, numSerie):
+        show = ('SELECT * FROM material WHERE numSerie = %s')
+
+        self.cursor.execute(show, (numSerie,))
+
+        r = self.cursor.fetchone()
+        if (r):
+            return {
+                "id_material": r[0],
+                "tipo": r[1],
+                "marca": r[2],
+                "descripcion": r[3],
+                "numSerie": r[4]
+            }
+        else:
+            return 'False'
+        
+
+    def isInLean(self, numSerie):
+        query = ('SELECT * FROM prestamoMaterial WHERE numSerie = %s')
+
+        self.cursor.execute(query, (numSerie,))
+
+        resultado = self.cursor.fetchall()
+
+        if(resultado):
+            return True
+        else:
+            return False
