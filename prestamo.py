@@ -49,12 +49,12 @@ class Prestamo:
 
         
     def nextValue(self):
-        query = ('SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = \'biblioteca\' AND TABLE_NAME = \'prestamo\'')
+        query = ('SELECT LAST_INSERT_ID()')
 
         self.cursor.execute(query,)
         result = self.cursor.fetchall()
         print(result)
-        return result[0][0]
+        return result[0][0] + 1
 
 
     def showLend(self, folio, libro = True):
