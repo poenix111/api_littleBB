@@ -1,3 +1,7 @@
+
+# A very simple Flask Hello World app for you to get started with...
+
+
 from flask import Flask, request, make_response, jsonify
 import mysql.connector
 from libro import Libro
@@ -6,23 +10,23 @@ from usuario import Usuario
 from flask_cors import CORS, cross_origin
 from db import DB
 from prestamo import Prestamo
-
 app = Flask(__name__)
-core = CORS(app)
 
+CORS(app)
 host = 'poenix111.mysql.pythonanywhere-services.com'
 user = 'poenix111'
 password = '@ashe123'
 database = 'poenix111$biblioteca'
 
-
-""" host = "localhost"
-password = "ashe123"
-user = "brian"
-database = "biblioteca" """
-
+"""
+@app.route('/')
+def hello_world():
+    return 'Hello from Flask!'
+"""
+@app.route('/HOME')
+def p():
+    return 'Hello from Flask!'
 db = DB(host, user, password, database)
-
 
 @app.before_request
 def before_request_callback():
@@ -349,5 +353,3 @@ def existsMaestro():
     user = data['usuario']
     return str(usuario.existsMaestro(user))
 
-
-app.run(debug=True, threaded=True)
