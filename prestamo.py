@@ -9,10 +9,9 @@ class Prestamo:
         self.material = Material(db)
         self.conexion = db.conexion
         self.cursor = db.cursor
-        
+
     def crear(self, data, libro = True):
-        prestamoId = self.nextValue()
-        
+
         crearPrestamoNormal = ('INSERT INTO prestamo(id_user, fecha) VALUES (%s, %s)')
         if(libro):
             valuesPrestamoNormal = (data['usuario'], data['libros'][0]['date'])
@@ -20,14 +19,17 @@ class Prestamo:
             valuesPrestamoNormal = (data['usuario'], data['materiales'][0]['date'])
 
         crearPrestamoLibro = ('INSERT INTO prestamoLibro(folio, id_libro, fechaDevolucion, extension) VALUES (%s, %s, %s, %s)')
-        
+
 
         crearPrestamoMaterial = ('INSERT INTO prestamoMaterial(folio, id_material, fechaDevolucion) VALUES (%s, %s, %s)')
-        
+
         self.cursor.execute(crearPrestamoNormal, valuesPrestamoNormal)
         self.conexion.commit()
 
+        query = ('SELECT LAST_INSERT_ID()')
 
+        self.cursor.execute(query)
+        prestamoId = self.cursor.fetchone()[0]
         if(libro):
 
             for libro in data['libros']:
@@ -45,16 +47,7 @@ class Prestamo:
                 valuesPrestamoMaterial = (prestamoId, material['id_material'], material['dateEntrega'])
                 self.cursor.execute(crearPrestamoMaterial, valuesPrestamoMaterial)
                 self.conexion.commit()
-        
 
-        
-    def nextValue(self):
-        query = ('SELECT LAST_INSERT_ID()')
-
-        self.cursor.execute(query,)
-        result = self.cursor.fetchall()
-        print(result)
-        return result[0][0] + 1
 
 
     def showLend(self, folio, libro = True):
@@ -74,15 +67,15 @@ class Prestamo:
             if(resultados):
                 for resultado in resultados:
                     print(resultado)
-                    l = self.libro.searchById(resultado[1]) 
+                    l = self.libro.searchById(resultado[1])
                     l['dateEntrega'] = str(resultado[2])
                     print(resultado[2])
-                    #datetime.strptime(str(resultado[2]), '%Y-%m-%d %H:%M:%S') 
+                    #datetime.strptime(str(resultado[2]), '%Y-%m-%d %H:%M:%S')
                     l['date'] = str(realLend[2])
                     l['usuario'] = realLend[1]
                     l['extension'] = resultado[3]
                     libros.append(l)
-                
+
                 return libros
         else:
             query = ('SELECT * FROM prestamoMaterial WHERE folio = %s')
@@ -119,7 +112,7 @@ class Prestamo:
             self.usuario.penalizar(data['usuario'])
             diasAtraso = abs(today - fechaDevolucion).days
             self.cobroPrestamo(data['folio'],diasAtraso)
-            return False 
+            return False
     def returnMaterial(self,data):
         self.borrarPrestamo(data['folio'],data['id_material'], False)
 
@@ -128,10 +121,10 @@ class Prestamo:
             delete = ('DELETE FROM prestamoLibro WHERE folio = %s AND id_libro = %s')
             self.cursor.execute(delete, (folio, idPrestado))
             self.conexion.commit()
-            """ 
+            """
             query = ('SELECT * FROM prestamoLibro WHERE folio = %s')
             self.cursor.execute(query, (folio, ))
-            resultado = self.cursor.fetchall()   """   
+            resultado = self.cursor.fetchall()   """
 
         else:
             delete = ('DELETE FROM prestamoMaterial WHERE folio = %s AND id_material = %s')
@@ -158,7 +151,7 @@ class Prestamo:
                         for libro in resultadosLibros:
                             libros.append(self.libro.searchById(libro[0])['isbn'])
                             #libros.append(libro[0])
-            
+
                 return libros
             else:
                 materiales = []
@@ -179,7 +172,7 @@ class Prestamo:
         self.cursor.execute(query)
         monto = self.cursor.fetchone()
         monto = monto[0] * diasAtraso
-        
+
         insert = ('INSERT INTO dinero(fecha, monto, id_prestamo) VALUES(%s, %s, %s)')
 
         self.cursor.execute(insert, (today, monto, folio))
@@ -191,7 +184,7 @@ class Prestamo:
         query = ('SELECT * FROM prestamo WHERE folio = %s')
 
         self.cursor.execute(query, (folio,))
-        
+
         resultado = self.cursor.fetchone()
 
         if(resultado):
@@ -212,6 +205,6 @@ class Prestamo:
 
 
             return None
-            
 
-        
+
+
