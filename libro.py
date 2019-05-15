@@ -186,3 +186,12 @@ class Libro:
         self.conexion.commit()
         return str(copys)
     
+    def borrarBook(self, isbn):
+        delete = ('DELETE FROM libro WHERE isbn = %s')
+        
+        try:
+            self.cursor.execute(delete, (isbn,))
+            self.conexion.commit()
+            return True
+        except:
+            return False

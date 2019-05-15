@@ -117,3 +117,13 @@ class Material:
             return True
         else:
             return False
+
+    def borrarMaterial(self, numSerie):
+        delete = ('DELETE FROM material WHERE numSerie = %s')
+        
+        try:
+            self.cursor.execute(delete, (numSerie,))
+            self.conexion.commit()
+            return True
+        except:
+            return False

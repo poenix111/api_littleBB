@@ -18,6 +18,11 @@ user = 'poenix111'
 password = '@ashe123'
 database = 'poenix111$biblioteca'
 
+
+""" host = 'localhost'
+user = 'brian'
+password = 'ashe123'
+database = 'biblioteca' """
 """
 @app.route('/')
 def hello_world():
@@ -261,6 +266,33 @@ def deleteUser():
         respuesta.headers.add("Access-Control-Allow-Origin", "*")
         return respuesta
 
+@app.route('/delete-book', methods=['POST'])
+def deleteBook():
+    book = Libro(db)
+    data = request.get_json(force=True)
+    isbn = data['isbn']
+    if(book.borrarBook(isbn)):
+        respuesta = make_response("Borrado exitoso")
+        respuesta.headers.add("Access-Control-Allow-Origin", "*")
+        return respuesta
+    else:
+        respuesta = make_response("Error")
+        respuesta.headers.add("Access-Control-Allow-Origin", "*")
+        return respuesta
+
+@app.route('/delete-material', methods=['POST'])
+def deleteMaterial():
+    material = Material(db)
+    data = request.get_json(force=True)
+    numSerie = data['numSerie']
+    if(material.borrarMaterial(numSerie)):
+        respuesta = make_response("Borrado exitoso")
+        respuesta.headers.add("Access-Control-Allow-Origin", "*")
+        return respuesta
+    else:
+        respuesta = make_response("Error")
+        respuesta.headers.add("Access-Control-Allow-Origin", "*")
+        return respuesta
 
 @app.route('/return-book', methods=['POST'])
 def returnBook():
@@ -353,3 +385,11 @@ def existsMaestro():
     user = data['usuario']
     return str(usuario.existsMaestro(user))
 
+@app.route('/folios-activos', methods=['POST'])
+def foliosActivos():
+    prestamo = Prestamo(db)
+    data = request.get_json(force=True)
+    user = data['id_usuario']
+    return jsonify(prestamo.mostrarFoliosActivos(user))
+
+#app.run(debug=True)

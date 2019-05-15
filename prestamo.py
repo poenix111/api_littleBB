@@ -206,5 +206,40 @@ class Prestamo:
 
             return None
 
+    def mostrarFoliosActivos(self, usuario):
 
+        queryPrestamo = ('SELECT folio FROM prestamo WHERE id_user = %s')
+        self.cursor.execute(queryPrestamo, (usuario,))
+        folios = self.cursor.fetchall()
+
+        resultados = []
+        
+        if(folios):
+            for folio in folios:
+                folio = folio[0]
+                queryLibro = ('SELECT DISTINCT folio FROM prestamoLibro WHERE folio = %s')
+                self.cursor.execute(queryLibro, (folio, ))
+                tmpLibro = self.cursor.fetchone()
+                if(tmpLibro):
+                    f = {
+
+                        'folio': str(tmpLibro[0]),
+                        'libro' : str(self.tipo(folio))
+                    }
+                    resultados.append(f)
+                
+                queryMaterial = ('SELECT DISTINCT folio FROM prestamoMaterial WHERE folio = %s')
+                self.cursor.execute(queryMaterial, (folio, ))
+                tmpMaterial = self.cursor.fetchone()
+                if(tmpMaterial):
+                    m = {
+                        'folio': str(tmpMaterial[0]),
+                        'libro' : str(self.tipo(folio))
+                    }
+                    resultados.append(m)
+        
+            return resultados
+
+        else:
+            return None
 
