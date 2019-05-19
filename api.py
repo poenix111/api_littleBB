@@ -392,4 +392,25 @@ def foliosActivos():
     user = data['id_usuario']
     return jsonify(prestamo.mostrarFoliosActivos(user))
 
+@app.route('/mostrar-dinero', methods = ['GET'])
+def mostrarDinero():
+    prestamo = Prestamo(db)
+
+    return jsonify(prestamo.returnMoney())
+
+
+
+
+@app.route('/cobro-daños', methods = ['POST'])
+def cobroDeDaño():
+    prestamo = Prestamo(db)
+    data = request.get_json(force = True)
+    money = data['dinero']
+    folio = data['folio']
+    prestamo.cobroDaño(money, folio)
+
+    respuesta = make_response("Cobro realizado")
+    respuesta.headers.add("Access-Control-Allow-Origin", "*")
+    return respuesta
+
 #app.run(debug=True)

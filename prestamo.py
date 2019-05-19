@@ -243,3 +243,41 @@ class Prestamo:
         else:
             return None
 
+    def returnMoney(self):
+        queryMoney = ('SELECT fecha, monto, id_prestamo FROM dinero')
+
+        self.cursor.execute(queryMoney)
+
+        resultados = self.cursor.fetchall()
+        dinero = []
+        if(resultados):
+            for resultado in resultados:
+
+                queryAlumno = ('SELECT DISTINCT id_user FROM prestamo WHERE folio = %s')
+
+                self.cursor.execute(queryAlumno, (resultado[2], ))
+                user = self.cursor.fetchone()
+                dict = {
+                    "fecha" : resultado[0],
+                    'dinero': resultado[1],
+                    'folio': resultado[2],
+                    "usuario" : user[0]
+                }
+                dinero.append(dict)
+
+            return dinero
+
+
+
+
+
+    def cobroDaño(self, money, folio):
+        today = datetime.now()
+        insert = ('INSERT INTO dinero(fecha, monto, id_prestamo) VALUES(%s, %s, %s)')
+        self.cursor.execute(insert, (today, money, folio))
+        self.conexion.commit()
+        """ if libro:
+            self.libro.turnIntoUnic(idObj)
+        else: 
+            inse """
+        
