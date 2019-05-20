@@ -271,11 +271,12 @@ class Prestamo:
 
 
 
-    def cobroDaño(self, money, folio):
+    def cobroDaño(self, money, folio, id_user):
         today = datetime.now()
         insert = ('INSERT INTO dinero(fecha, monto, id_prestamo) VALUES(%s, %s, %s)')
         self.cursor.execute(insert, (today, money, folio))
         self.conexion.commit()
+        self.usuario.penalizar(id_user)
         """ if libro:
             self.libro.turnIntoUnic(idObj)
         else: 

@@ -407,7 +407,8 @@ def cobroDeDaño():
     data = request.get_json(force = True)
     money = data['dinero']
     folio = data['folio']
-    prestamo.cobroDaño(money, folio)
+    id_user = data['usuario']
+    prestamo.cobroDaño(money, folio, id_user)
 
     respuesta = make_response("Cobro realizado")
     respuesta.headers.add("Access-Control-Allow-Origin", "*")
