@@ -13,24 +13,19 @@ from prestamo import Prestamo
 app = Flask(__name__)
 
 CORS(app)
-host = 'poenix111.mysql.pythonanywhere-services.com'
-user = 'poenix111'
-password = '@ashe123'
-database = 'poenix111$biblioteca'
 
+if __name__ == '__main__':
+    host = 'localhost'
+    user = 'brian'
+    password = 'ashe123'
+    database = 'biblioteca'
+else:
+#pythonanywhere
+    host = 'poenix111.mysql.pythonanywhere-services.com'
+    user = 'poenix111'
+    password = '@ashe123'
+    database = 'poenix111$biblioteca'
 
-""" host = 'localhost'
-user = 'brian'
-password = 'ashe123'
-database = 'biblioteca' """
-"""
-@app.route('/')
-def hello_world():
-    return 'Hello from Flask!'
-"""
-@app.route('/HOME')
-def p():
-    return 'Hello from Flask!'
 db = DB(host, user, password, database)
 
 @app.before_request
@@ -192,13 +187,6 @@ def userInfo():
         return jsonify(usuario.showInfo(user['usuario']))
 
     return str(False)
-
-
-@app.route('/next-value')
-def nextValue():
-    prestamo = Prestamo(db)
-    return str(prestamo.nextValue())
-
 
 @app.route('/prestamo-libro', methods=['POST'])
 def prestamoLibro():
@@ -414,4 +402,5 @@ def cobroDeDaño():
     respuesta.headers.add("Access-Control-Allow-Origin", "*")
     return respuesta
 
-#app.run(debug=True)
+if __name__ == '__main__':
+    app.run(debug=True)
