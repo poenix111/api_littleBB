@@ -127,3 +127,40 @@ class Material:
             return True
         except:
             return False
+
+    def searchByNumserie(self, numSerie):
+        query = ('SELECT * FROM material WHERE numSerie LIKE %s')
+        numSerie = '%' + numSerie + '%'
+        self.cursor.execute(query, (numSerie,))
+        consulta = self.cursor.fetchall()
+
+        resultados = []
+        if(consulta):
+            for r in consulta:
+                material = {
+                    "id_material": r[0],
+                    "tipo": r[1],
+                    "marca": r[2],
+                    "descripcion": r[3],
+                    "numSerie": r[4]
+                }
+                resultados.append(material)
+            return resultados
+
+    def searchByType(self, tipo):
+        query = ('SELECT * FROM material WHERE tipo =  %s')
+        self.cursor.execute(query, (tipo,))
+        consulta = self.cursor.fetchall()
+
+        resultados = []
+        if(consulta):
+            for r in consulta:
+                material = {
+                    "id_material": r[0],
+                    "tipo": r[1],
+                    "marca": r[2],
+                    "descripcion": r[3],
+                    "numSerie": r[4]
+                }
+                resultados.append(material)
+            return resultados

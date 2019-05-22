@@ -8,27 +8,6 @@ class Libro:
         insertar = (
             'INSERT INTO libro(nombre, autor, genero, edicion, editorial, idioma, isbn, descripcion, existencia, unicos, disponibles) VALUES (%s,%s,%s,%s,%s,%s,%s,%s, %s,%s,%s)')
 
-        """ query = (
-            'SELECT * FROM libro WHERE nombre = %s AND autor = %s AND edicion = %s')
-        # Para validar que no tenga que solo actualizar la existecia del libro
-        self.cursor.execute(query, (nombre, autor, edicion))
-        result = self.cursor.fetchall()
-        if(result):
-            existencia = int(result[0][9])
-            existencia = existencia + 1
-            disponibles = int(result[0][11])
-            disponibles = disponibles + 1
-            print(result)
-            updateExistencia = (
-                'UPDATE libro SET existencia = %s, disponibles = %s WHERE id_libro = %s')
-            # Esta raro no se actualiza, verificar porque
-            self.cursor.execute(
-                updateExistencia, (existencia, disponibles, result[0][0]))
-            self.conexion.commit()
-        else:
-            self.cursor.execute(
-                insertar, (nombre, autor, genero, edicion, editorial, idioma, isbn, descripcion, '1', '1', '1'))
-            self.conexion.commit() """
         self.cursor.execute(insertar, (data['nombre'], data['autor'], data['genero'], data['edicion'], data['editorial'],
                                        data['idioma'], data['isbn'], data['descripcion'], data['existencia'], data['unicos'], data['disponibles']))
         self.conexion.commit()
@@ -195,3 +174,62 @@ class Libro:
             return True
         except:
             return False
+
+    def searchBookByIsbn(self, isbn):
+        query = ('SELECT * FROM libro WHERE isbn LIKE %s')
+
+        isbn = '%' + isbn + '%'
+
+        self.cursor.execute(query, (isbn,))
+
+        resultados = self.cursor.fetchall()
+
+        lista = []
+        if(resultados):
+            for r in resultados:
+                libro = {
+                    "id_libro": r[0],
+                    "nombre": r[1],
+                    "autor": r[2],
+                    "genero": r[3],
+                    "edicion": r[4],
+                    "editorial": r[5],
+                    "idioma": r[6],
+                    "isbn": r[7],
+                    "descripcion": r[8],
+                    "existencia": r[9],
+                    "unicos": r[10],
+                    "disponibles": r[11]
+                }
+
+                lista.append(libro)
+            return lista
+
+    def searchBookByName(self, name):
+        query = ('SELECT * FROM libro WHERE nombre LIKE %s')
+
+        name = '%' + name + '%'
+
+        self.cursor.execute(query, (name,))
+
+        resultados = self.cursor.fetchall()
+
+        lista = []
+        if(resultados):
+            for r in resultados:
+                libro = {
+                    "id_libro": r[0],
+                    "nombre": r[1],                        "autor": r[2],
+                    "genero": r[3],
+                    "edicion": r[4],
+                    "editorial": r[5],
+                    "idioma": r[6],
+                    "isbn": r[7],
+                    "descripcion": r[8],
+                    "existencia": r[9],
+                    "unicos": r[10],
+                    "disponibles": r[11]
+                }
+
+                lista.append(libro)
+            return lista

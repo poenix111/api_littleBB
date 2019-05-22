@@ -70,20 +70,47 @@ def registrarMaterial():
     return respuesta
 
 
-@app.route('/recuperar-libros/', methods=['GET'])
+@app.route('/recuperar-libros', methods=['GET'])
 def recuperarLibros():
     libro = Libro(db)
-    result = libro.mostrarAll()
-    print(result)
-    return jsonify(result)
+    isbn = request.args.get('filtro')
+
+    name = request.args.get('nombre')
+
+    if name != None:
+        result = libro.searchBookByName(name)
+        return jsonify(result)
 
 
-@app.route('/recuperar-material/', methods=['GET'])
+    if isbn == None:
+        result = libro.mostrarAll()
+        print(result)
+        return jsonify(result)
+    else:
+        result = libro.searchBookByIsbn(isbn)
+        return jsonify(result)
+
+
+
+@app.route('/recuperar-material', methods=['GET'])
 def recuperarMaterial():
     material = Material(db)
-    result = material.mostrarAll()
-    print(result)
-    return jsonify(result)
+    
+    numSerie = request.args.get('filtro')
+    tipo = request.args.get('categoria')
+
+    if(tipo != None):
+        result = material.searchByType(tipo)
+        return jsonify(result)
+
+    if(numSerie == None):
+        result = material.mostrarAll()
+        print(result)
+        return jsonify(result)
+    else:
+        result = material.searchByNumserie(numSerie)
+        return jsonify(result)
+
 
 
 @app.route('/recuperar-usuarios', methods=['GET'])
@@ -401,6 +428,8 @@ def cobroDeDaño():
     respuesta = make_response("Cobro realizado")
     respuesta.headers.add("Access-Control-Allow-Origin", "*")
     return respuesta
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
