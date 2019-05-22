@@ -116,7 +116,13 @@ def recuperarMaterial():
 @app.route('/recuperar-usuarios', methods=['GET'])
 def recuperarUsuarios():
     usuario = Usuario(db)
-    result = usuario.mostrarAll()
+
+    matricula = request.args.get('matricula')
+    name = request.args.get('nombre')
+
+    print(matricula)
+
+    result = usuario.mostrarAll(name, matricula)
     return jsonify(result)
 
 

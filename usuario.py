@@ -69,9 +69,22 @@ class Usuario:
                                          usuario['telefono'], usuario['penalizaciones'], usuario['area'], usuario['estado'], usuario['id_usuario']))
         self.conexion.commit()
 
-    def mostrarAll(self):
-        query = ('SELECT * FROM usuario')
-        self.cursor.execute(query)
+    def mostrarAll(self, name=None, matricula=None):
+        query = ('SELECT * FROM usuario ')
+
+        if(name or matricula):
+            if(name):
+                query += ('WHERE nombre LIKE %s')
+                name = '%' + name + '%'
+                self.cursor.execute(query, (name, ))
+            if(matricula):
+                query += ('WHERE CAST(id_usuario as CHAR) LIKE %s')
+                matricula = '%' + matricula + '%'
+                self.cursor.execute(query, (matricula, ))
+        else:
+            self.cursor.execute(query)
+
+
         consulta = self.cursor.fetchall()
 
         resultados = []
